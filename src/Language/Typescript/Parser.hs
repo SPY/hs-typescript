@@ -28,9 +28,7 @@ var = do
   string "var"
   many1 space
   defs <- sepBy1 varDef (spaces >> char ',' >> spaces)
-  return $ VarDefinition defs
-
-number = try float <|> integer
+  return $ SVarDefinition defs
 
 float = do
   ds <- many digit
@@ -39,13 +37,38 @@ float = do
   guard (length ds + length dd > 0)
   let int = if length ds > 0 then read ds else 0
       rat = if length dd > 0 then read ("0." ++ dd) else 0
-  return $ Number $ int + rat
+  return $ SNumber $ int + rat
+
+scinific = do
+  char 'e'
+  sign <- negSign <|> posSign <|> (return id)
+  (SNumber n) <- integer
+  return $ (10 **) $ sign n
+    where negSign = char '-' >> return negate
+          posSign = char '+' >> return id
+
+number = do
+  (SNumber n) <- try float <|> integer
+  (do  m <- scinific
+       return $ SNumber $ n * m) <|> (return $ SNumber n)
 
 integer = do
   ds <- many1 digit
-  return $ Number $ read ds 
+  return $ SNumber $ read ds
 
-expression = number
+stringChar quote = (string ['\\', quote] >> return quote) <|> noneOf [quote]
+
+stringLiteral = do
+  q <- char '\'' <|> char '"'
+  str <- many $ stringChar q
+  char q
+  return $ SString str
+
+-- operation = do
+--   f <- factor
+  
+
+expression = number <|> stringLiteral
 
 statement = var <|> expression
 

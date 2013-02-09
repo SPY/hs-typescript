@@ -1,8 +1,9 @@
 module Language.Typescript.Parser.Types where
 
-data Statement = VarDefinition [VarDefinition]
-               | FunDefinition (Maybe String) FunBody
-               | Number Float
+data Statement = SVarDefinition [VarDefinition]
+               | SFunDefinition (Maybe String) FunBody
+               | SNumber Float
+               | SString String
                  deriving (Show, Eq)
 
 type VarDefinition = (String, Maybe Statement)
