@@ -8,5 +8,6 @@ import Test.Framework.BlackBoxTest
 import {-@ HTF_TESTS @-} Test.Parser.Variable
 import {-@ HTF_TESTS @-} Test.Parser.Number
 import {-@ HTF_TESTS @-} Test.Parser.String
+import {-@ HTF_TESTS @-} Test.Parser.Function
 
 main = htfMain htf_importedTests

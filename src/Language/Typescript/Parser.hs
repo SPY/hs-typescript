@@ -64,11 +64,25 @@ stringLiteral = do
   char q
   return $ SString str
 
--- operation = do
---   f <- factor
-  
+function = do
+  string "function"
+  name <- optionMaybe (many1 space >> identifier)
+  args <- params
+  spaces
+  body <- funBody
+  return $ SFunDefinition name body args
 
-expression = number <|> stringLiteral
+params = 
+    between (char '(') (char ')') $ 
+            sepBy identifier (spaces >> char ',' >> spaces)
+
+funBody = do
+    char '{' >> spaces
+    exps <- many statement
+    spaces >> char '}'
+    return exps
+
+expression = function <|> number <|> stringLiteral
 
 statement = var <|> expression
 
