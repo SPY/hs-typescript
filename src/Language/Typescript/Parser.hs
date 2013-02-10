@@ -16,6 +16,18 @@ emptyDef = do
   varName <- identifier
   return (varName, Nothing)
 
+objectField = do
+  key <- identifier <|> (do { (SString s) <- stringLiteral; return s; })
+  spaces >> char ':' >> spaces
+  val <- expression
+  return $ (key, val)
+
+objectLiteral = do
+  char '{' >> spaces
+  fs <- sepEndBy (try (spaces >> objectField)) (char ',')
+  spaces >> char '}'
+  return $ SObject fs
+
 initedDef = do
   varName <- identifier
   spaces
@@ -27,7 +39,7 @@ initedDef = do
 var = do
   string "var"
   many1 space
-  defs <- sepBy1 varDef (spaces >> char ',' >> spaces)
+  defs <- sepBy1 (try (spaces >> varDef)) (char ',')
   return $ SVarDefinition defs
 
 float = do
@@ -72,8 +84,8 @@ function = do
   body <- funBody
   return $ SFunDefinition name body args
 
-params = 
-    between (char '(') (char ')') $ 
+params =
+    between (char '(') (char ')') $
             sepBy identifier (spaces >> char ',' >> spaces)
 
 funBody = do
@@ -82,7 +94,7 @@ funBody = do
     spaces >> char '}'
     return exps
 
-expression = function <|> number <|> stringLiteral
+expression = function <|> objectLiteral <|> number <|> stringLiteral
 
 statement = var <|> expression
 

@@ -19,6 +19,9 @@ failed inp =
 test_singleVarEmptyDefinition = 
     success "var x" [("x", Nothing)]
 
+test_singleVarWithSpaces = 
+    success "var x " [("x", Nothing)]
+
 test_manyVarEmptyDefinition = 
     success "var x, y" [
                  ("x", Nothing),
@@ -49,8 +52,10 @@ test_multiInitial2 =
 test_initByString = 
     success "var s = 'string'" [("s", Just $ SString "string")]
 
+{-
 test_expressionInInitial =
     failed "var x = "
+-}
 
 test_endComma =
     failed "var x,"

@@ -32,4 +32,4 @@ test_severalArgsFunction =
     success "function(x,y,$){}" Nothing [] ["x", "y", "$"]
 
 test_notEmptyFunction =
-    success "function() { var x }" Nothing [SVarDefinition [("x", Nothing)]] []
+    success "function() { 'string' }" Nothing [SString "string"] []
