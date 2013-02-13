@@ -1,13 +1,9 @@
 module Language.Typescript.Parser.Keyword (
-                                           reservedWords,
-                                           keyword,
-                                           reserved
-                                          ) where
+  reservedWords,
+  reserved
+) where
 
 import Text.Parsec (string, choice)
-import Data.Char (toUpper)
-
-import Language.Typescript.Parser.Types
 
 keyWords = [
  "break", "case", "catch", "continue", "debugger",
@@ -25,13 +21,4 @@ futureReservedWords = [
 
 reservedWords = keyWords ++ futureReservedWords
 
-parseKeyword (k, t) = do
-  string k
-  return t
-
-keyword = choice $ map parseKeyword $ zip keyWords $ enumFrom $ toEnum 0 :: KeywordType
-
-futureReserved = choice $ map parseKeyword $ 
-                 zip futureReservedWords $ enumFrom $ toEnum 0 :: FutureReservedWord
-
-reserved = keyword <|> futureReserved
+reserved = choice $ map string reservedWords

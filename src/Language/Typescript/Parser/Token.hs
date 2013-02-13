@@ -8,7 +8,10 @@ import Control.Monad (guard)
 import Language.Typescript.Parser.Keyword
 import Language.Typescript.Parser.Types
 
-lineTerminator = oneOf "\LF\CR\x2028\x2029"
+lineTerminatorChars = "\LF\CR\x2028\x2029"
+lineTerminator = oneOf lineTerminatorChars
+
+lineTerminatorSeq = (string "\CR\LF" >> return '\n') <|> lineTerminator
 
 comment = multiLineComment <|> singleLineComment
 
@@ -39,5 +42,5 @@ identifierName = do
 identifier = do
   name <- identifierName
   guard . not $ name `elem` reservedWords
-
+  return $ Identifier name
 

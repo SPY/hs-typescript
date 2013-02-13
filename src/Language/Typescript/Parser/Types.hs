@@ -2,57 +2,20 @@ module Language.Typescript.Parser.Types where
 
 data Token = Comment String
            | Identifier String
-           | Keyword KeywordType
-           | Literal LiteralType
+           | NullLiteral
+           | BooleanLiteral Bool
+           | NumericLiteral Float
+           | StringLiteral String
+           | RegExpLiteral String
+           | This
+           | ArrayLiteral [Maybe Expression]
+           | ObjectLiteral [ObjectField]
+           | ExpressionToken Expression
              deriving (Show, Eq)
 
-data KeywordType = Break
-                 | Case
-                 | Catch
-                 | Continue
-                 | Debugger
-                 | Default
-                 | Delete
-                 | Do
-                 | Else
-                 | Finally
-                 | For
-                 | Function
-                 | If
-                 | In
-                 | InstanceOf
-                 | New
-                 | Return
-                 | Switch
-                 | This
-                 | Throw
-                 | Try
-                 | TypeOf
-                 | Var
-                 | Void
-                 | While
-                 | With
-                   deriving (Show, Read, Eq, Enum)
+data Expression = Primary Token
+                  deriving (Show, Eq)
 
-data FutureReservedWord = Class
-                         | Const
-                         | Enum
-                         | Export
-                         | Extends
-                         | Implements
-                         | Import
-                         | Interface
-                         | Let
-                         | Package
-                         | Private
-                         | Protected
-                         | Public
-                         | Static
-                         | Super
-                         | Yield
-                           deriving (Show, Read, Eq, Enum)
-
-data LiteralType = NullLiteral
-                 | BooleanLiteral Bool
-                 | NumericLiteral Float
-                   deriving (Show, Eq)
+data ObjectField = Simple Token Expression
+                 | Getter Token Token
+                 | Setter Token Token
