@@ -26,9 +26,11 @@ booleanLiteral = trueLiteral <|> falseLiteral
           falseLiteral = string "false" >> (return $ Boolean False)
 
 -- TODO: complate regexp literal
+regexpLiteral :: TSParser Literal
 regexpLiteral = between (char '/') (char '/') $ do
   body <- many $ noneOf "/"
   return $ RegExp body
 
+literal :: TSParser Literal
 literal = nullLiteral <|> booleanLiteral <|> numericLiteral <|>
           stringLiteral <|> regexpLiteral
