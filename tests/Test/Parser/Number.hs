@@ -47,3 +47,11 @@ test_positiveScinificNotation =
 test_integerScinificNotation =
     success "1e-3" 0.001
 
+test_emptyScinificFloat =
+    failed ".e-2"
+
+test_hexInteger =
+    success "0x14" 20
+
+test_hexBigXInteger =
+    success "0X14" 20
