@@ -5,19 +5,17 @@ module Language.Typescript.Parser.Keyword (
 
 import Text.Parsec (string, choice)
 
-keyWords = [
- "break", "case", "catch", "continue", "debugger",
- "default", "delete", "do", "else", "finally", "for",
- "function", "if", "in", "instanceof", "new",
- "return", "switch", "this", "throw", "try", "typeof",
- "var", "void", "while", "with"
-]
+keyWords = [ "break", "case", "catch", "continue", "debugger",
+             "default", "delete", "do", "else", "finally", "for",
+             "function", "if", "in", "instanceof", "new",
+             "return", "switch", "this", "throw", "try", "typeof",
+             "var", "void", "while", "with"
+           ]
 
-futureReservedWords = [
- "class", "const", "enum", "export", "extends",  "implements",
- "import", "interface", "let", "package", "private", 
- "protected", "public", "static", "super", "yield"
-]
+futureReservedWords = [ "class", "const", "enum", "export", "extends", 
+                        "implements", "import", "interface", "let", "package", "private", 
+                        "protected", "public", "static", "super", "yield"
+                      ]
 
 reservedWords = keyWords ++ futureReservedWords
 

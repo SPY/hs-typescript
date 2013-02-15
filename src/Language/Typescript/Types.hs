@@ -32,6 +32,7 @@ data Expression = ExpressionSeq [Expression]
                 | CallExpression Expression [Expression]
                 | NewExpression Expression [Expression]
                 | MemberExpression Member
+                | PostfixExpression PostfixOp
                 | PrimaryExpression Primary
                 | FunctionExpression (Maybe Identifier) [Argument] [SourceElement]
                   deriving (Show, Eq)
@@ -129,3 +130,8 @@ data UnaryOp = UnaryDelete
              | UnaryBitNot
              | UnaryNot
                deriving (Show, Eq)
+
+data PostfixOp = PostfixIcrement
+               | PostfixDecrement
+                 deriving (Show, Eq)
+

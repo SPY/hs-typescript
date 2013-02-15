@@ -7,70 +7,78 @@ module Language.Typescript.Parser.Literal (
   regexpLiteral
 ) where
 
-import Text.Parsec (string, hexDigit, choice)
-import Text.Parsec (many, digit, (<|>))
+import Text.Parsec
 
 import Data.Char (chr)
 
+import Language.Typescript.Types
 import Language.Typescript.Parser.Types
 import Language.Typescript.Parser.Token (lineTerminatorChars, lineTerminatorSeq)
 
+nullLiteral :: TSParser Literal
 nullLiteral = do
   string "null"
-  return $ NullLiteral
+  return $ Null
 
+booleanLiteral :: TSParser Literal
 booleanLiteral = trueLiteral <|> falseLiteral
-    where trueLiteral = string "true" >> (return $ BooleanLiteral True)
-          falseLiteral = string "false" >> (return $ BooleanLiteral False)
+    where trueLiteral = string "true" >> (return $ Boolean True)
+          falseLiteral = string "false" >> (return $ Boolean False)
 
+numericLiteral :: TSParser Literal
 numericLiteral = decimalLiteral <|> hexIntegerLiteral
 
+decimalLiteral :: TSParser Literal
 decimalLiteral = do
+  lookAhead $ digit <|> (char '.' >> digit) 
   ds <- option "0" decimalIntegerLiteral
-  dd <- (char '.' >> option "0" digit) <|> return "0"
-  e <- option 1 exponent
-  return $ NumericLiteral $ (e*) $ read ds
+  dd <- (char '.' >> option "0" (many1 digit)) <|> return "0"
+  e <- option 1 exponentPart
+  return $ Numeric $ (e*) $ read (ds ++ "." ++ dd)
 
+decimalIntegerLiteral :: TSParser String
 decimalIntegerLiteral = 
-    (char '0' >> return ['0']) <|> (do
+    (char '0' >> return "0") <|> (do
       d <- oneOf "123456789"
       ds <- many digit
       return $ d:ds)
 
-hexIntegerLiteral = 
+hexIntegerLiteral :: TSParser Literal
+hexIntegerLiteral = do
     string "0x" <|> string "0X"
     ds <- many1 hexDigit
-    return $ NumericLiteral $ read $ "0x" ++ ds
+    return $ Numeric $ read $ "0x" ++ ds
 
-exponent = do
+exponentPart :: TSParser Double
+exponentPart = do
   oneOf "eE"
   sign <- option id $ (char '+' >> return id) <|> (char '-' >> return negate)
   ds <- many1 digit
-  rerutn $ (10**) $ sign $ read ds
+  return $ (10**) $ sign $ read ds
 
 stringLiteral = singleCommaLiteral <|> doubleCommaLiteral
 
-singleCommaLiteral = between (char '\'') (char '\'') $ many stringChar
+singleCommaLiteral = between (char '\'') (char '\'') $ do
+  cs <- many stringChar
+  return $ StringLiteral cs
     where stringChar = choice [
                         noneOf $ "\\'" ++ lineTerminatorChars,
-                        try $ char '\\' >> lineTerminatorSeq >> return '\n'
+                        try $ char '\\' >> lineTerminatorSeq >> return '\n',
                         char '\\' >> escapeSeq
                        ]
 
 escapeSeq = choice [
              charEscapeSeq,
-             string "\0" >> return 0,
+             string "\0" >> return (chr 0),
              hexEscapeSeq,
              unicodeEscapeSeq
             ]
 
-charEscapeSeq = do
-  str <- singleEscapedCharSeq <|> nonEscapedCharSeq
-  return $ StringLiteral str
+charEscapeSeq = singleEscapedCharSeq <|> nonEscapedCharSeq
 
 singleEscapedCharSeq = do
   c <- oneOf "'\"\\bfnrtv"
-  (Just ch) <- lookup c pairs
+  let (Just ch) = lookup c pairs
   return $ ch
     where pairs = zip "'\"\\bfnrtv" "'\"\\\b\f\n\r\t\v"
 
@@ -86,18 +94,18 @@ unicodeEscapeSeq = do
   ds <- count 4 hexDigit
   return $ chr $ read $ "0x" ++ ds
 
-doubleCommaLiteral = between (char '"') (char '"') $ many stringChar
+doubleCommaLiteral = between (char '"') (char '"') $ do 
+  cs <- many stringChar
+  return $ StringLiteral cs
     where stringChar = choice [
                         noneOf $ "\\\"" ++ lineTerminatorChars,
-                        try $ char '\\' >> lineTerminatorSeq >> return '\n'
+                        try $ char '\\' >> lineTerminatorSeq >> return '\n',
                         char '\\' >> escapeSeq
                        ]
 -- TODO: complate regexp literal
-regexpLiteral = (between (char '/') (char '/') $ do
-                   body <- many noneOf "/"
-                   return $ RegExpLiteral boyd
+regexpLiteral = between (char '/') (char '/') $ do
+  body <- many $ noneOf "/"
+  return $ RegExp body
 
-literal = choice [
-           nullLiteral, booleanLiteral, numericLiteral,
-           stringLiteral, regexpLiteral
-          ]
+literal = nullLiteral <|> booleanLiteral <|> numericLiteral <|>
+          stringLiteral <|> regexpLiteral

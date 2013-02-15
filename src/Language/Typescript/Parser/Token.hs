@@ -1,11 +1,13 @@
 module Language.Typescript.Parser.Token where
 
 import Text.Parsec (oneOf, manyTill, string, anyToken, count, hexDigit)
-import Text.Parsec (many, letter, digit)
+import Text.Parsec (many, letter, digit, (<|>), Parsec)
 
 import Control.Monad (guard)
+import Data.Char (chr)
 
-import Language.Typescript.Parser.Keyword
+--import Language.Typescript.Parser.Keyword
+import Language.Typescript.Types
 import Language.Typescript.Parser.Types
 
 lineTerminatorChars = "\LF\CR\x2028\x2029"
@@ -15,32 +17,36 @@ lineTerminatorSeq = (string "\CR\LF" >> return '\n') <|> lineTerminator
 
 comment = multiLineComment <|> singleLineComment
 
+multiLineComment :: TSParser SourceElement
 multiLineComment = do 
   string "/*"
   cs <- manyTill anyToken $ string "*/"
-  return $ Comment cs
+  return $ SEComment cs
 
+singleLineComment :: TSParser SourceElement
 singleLineComment = do
   string "//"
   cs <- manyTill anyToken lineTerminator
-  return $ Comment cs
+  return $ SEComment cs
 
 -- TODO: add unicode categories 
 unicodeLetter = letter
 
+unicodeEscapedChar :: TSParser Char
 unicodeEscapedChar = do
-  char '\\u'
+  string "\\u"
   code <- count 4 hexDigit
+  return $ chr $ read $ "0x" ++ code
 
 identifierName = do
   c <- initialChar
-  cs <- many initialChar <|> restChar
+  cs <- many $ initialChar <|> restChar
   return $ c:cs
       where initialChar = oneOf "_$" <|> unicodeLetter <|> unicodeEscapedChar
             restChar = digit <|> oneOf "\x200C\x200D"
 
 identifier = do
   name <- identifierName
-  guard . not $ name `elem` reservedWords
+--  guard . not $ name `elem` reservedWords
   return $ Identifier name
 
