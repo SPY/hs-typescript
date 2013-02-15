@@ -24,10 +24,10 @@ singleCommaLiteral = between (char '\'') (char '\'') $ do
 
 escapeSeq :: TSParser Char
 escapeSeq = choice [
-             charEscapeSeq,
              string "\0" >> return (chr 0),
              hexEscapeSeq,
-             unicodeEscapeSeq
+             unicodeEscapeSeq,
+             charEscapeSeq
             ]
 
 charEscapeSeq :: TSParser Char

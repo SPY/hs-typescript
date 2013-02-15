@@ -2,19 +2,14 @@
 module Test.Parser.String (htf_thisModulesTests) where
 
 import Test.Framework
+import Test.Utils
 
-import Language.Typescript.Parser
-import Language.Typescript.Parser.Types
+import Language.Typescript.Types
+import Language.Typescript.Parser.Literal
 
-success inp res = 
-    case (parseString inp) of
-      Left _ -> assertFailure "Error on parsing"
-      Right [e] -> assertEqual e $ SString res
+success = makeSuccess stringLiteral StringLiteral
 
-failed inp =
-    case parseString inp of
-      Left _ -> assertBool True
-      Right _ -> assertFailure "Expected parsing error"
+failed = makeFailed stringLiteral
 
 test_emptyStringSingleQuote =
     success "''" ""
@@ -33,3 +28,12 @@ test_nestedQuotes =
 
 test_escapedQuote =
     success "'abc\\'dfg'" "abc'dfg"
+
+test_unicodeSeq = 
+    success "'\\u0030'" "0"
+
+test_hexSeq =
+    success "'\\x30'" "0"
+
+test_mixSeq = 
+    success "\"\\x30\\u00300f\"" "000f"

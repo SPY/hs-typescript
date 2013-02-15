@@ -16,9 +16,7 @@ import Language.Typescript.Parser.Literal.Numeric
 import Language.Typescript.Parser.Literal.String
 
 nullLiteral :: TSParser Literal
-nullLiteral = do
-  string "null"
-  return $ Null
+nullLiteral = string "null" >> return Null
 
 booleanLiteral :: TSParser Literal
 booleanLiteral = trueLiteral <|> falseLiteral

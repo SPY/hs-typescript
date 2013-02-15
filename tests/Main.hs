@@ -6,7 +6,7 @@ module Main where
 import Test.Framework
 import Test.Framework.BlackBoxTest
 import {-@ HTF_TESTS @-} Test.Parser.Number
---import {-@ HTF_TESTS @-} Test.Parser.String
+import {-@ HTF_TESTS @-} Test.Parser.String
 --import {-@ HTF_TESTS @-} Test.Parser.Object
 
 main = htfMain htf_importedTests
