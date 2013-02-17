@@ -9,6 +9,5 @@ import {-@ HTF_TESTS @-} Test.Parser.Number
 import {-@ HTF_TESTS @-} Test.Parser.String
 import {-@ HTF_TESTS @-} Test.Parser.PrimaryExpression
 import {-@ HTF_TESTS @-} Test.Parser.MemberExpression
---import {-@ HTF_TESTS @-} Test.Parser.Object
 
 main = htfMain htf_importedTests

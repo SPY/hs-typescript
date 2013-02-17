@@ -18,6 +18,7 @@ y = Identifier "y"
 z = Identifier "z"
 simpleX = simple x
 xDotY = Dot simpleX y
+yString = MemberExpression $ SimpleMember $ PrimaryExpression $ PrimaryLiteral $ StringLiteral "y"
 
 {- tests -}
 test_singleIdent = 
@@ -28,3 +29,15 @@ test_singleDotMember =
 
 test_doubleDotMembera = 
     success "x.y.z" $ Dot (Dot simpleX y) z
+
+test_bracketsMember =
+    success "x['y']" $ Brackets simpleX yString
+
+test_mixedMemberExpression =
+    success "x['y'].z" $ Dot (Brackets simpleX yString) z
+
+test_nestedMemberExpression =
+    success "x[ x . y]" $ Brackets simpleX $ MemberExpression $ Dot simpleX y
+
+test_thisMemberExpression =
+    success "this.x" $ Dot (simple This) x
