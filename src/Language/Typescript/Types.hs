@@ -43,8 +43,8 @@ data Primary = Identifier Identifier
              | Parentheses Expression
                deriving (Show, Eq)
 
-data Member = SimpleMember Primary
-            | Dot Member String
+data Member = SimpleMember Expression
+            | Dot Member Primary
             | Brackets Member Expression
               deriving (Show, Eq)
 

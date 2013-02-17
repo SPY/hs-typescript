@@ -5,6 +5,8 @@ module Language.Typescript.Parser.Keyword (
 
 import Text.Parsec (string, choice)
 
+import Language.Typescript.Parser.Types
+
 keyWords = [ "break", "case", "catch", "continue", "debugger",
              "default", "delete", "do", "else", "finally", "for",
              "function", "if", "in", "instanceof", "new",
@@ -19,4 +21,5 @@ futureReservedWords = [ "class", "const", "enum", "export", "extends",
 
 reservedWords = keyWords ++ futureReservedWords
 
+reserved :: TSParser String
 reserved = choice $ map string reservedWords

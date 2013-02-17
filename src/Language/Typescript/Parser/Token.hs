@@ -30,6 +30,7 @@ singleLineComment = do
   return $ SEComment cs
 
 -- TODO: add unicode categories 
+unicodeLetter :: TSParser Char
 unicodeLetter = letter
 
 unicodeEscapedChar :: TSParser Char
@@ -37,16 +38,3 @@ unicodeEscapedChar = do
   string "\\u"
   code <- count 4 hexDigit
   return $ chr $ read $ "0x" ++ code
-
-identifierName = do
-  c <- initialChar
-  cs <- many $ initialChar <|> restChar
-  return $ c:cs
-      where initialChar = oneOf "_$" <|> unicodeLetter <|> unicodeEscapedChar
-            restChar = digit <|> oneOf "\x200C\x200D"
-
-identifier = do
-  name <- identifierName
---  guard . not $ name `elem` reservedWords
-  return $ Identifier name
-

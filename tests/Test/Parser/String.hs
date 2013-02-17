@@ -37,3 +37,10 @@ test_hexSeq =
 
 test_mixSeq = 
     success "\"\\x30\\u00300f\"" "000f"
+
+test_slashN =
+    success "'string\\\nanother'" "string\nanother"
+
+test_escapedChar =
+    success "'text\\ttext'" "text\ttext"
+
