@@ -13,17 +13,10 @@ failed = makeFailed memberExpression
 
 {- helpers -}
 simple = SimpleMember . PrimaryExpression
-x = Identifier "x"
-y = Identifier "y"
-z = Identifier "z"
 simpleX = simple x
 xDotY = Dot simpleX y
-yString = MemberExpression $ SimpleMember $ PrimaryExpression $ PrimaryLiteral $ StringLiteral "y"
 
 {- tests -}
-test_singleIdent = 
-    success "x" simpleX
-
 test_singleDotMember =
     success "x.y" $ Dot simpleX y
 
@@ -41,3 +34,6 @@ test_nestedMemberExpression =
 
 test_thisMemberExpression =
     success "this.x" $ Dot (simple This) x
+
+test_parenthesesMemberExpression =
+    success "(this).x" $ Dot (SimpleMember $ PrimaryExpression $ Parentheses $ PrimaryExpression This) x

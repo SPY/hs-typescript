@@ -25,8 +25,11 @@ bracketsRest nest = do
 
 memberRest nest = choice $ map ($ nest) [dotRest, bracketsRest]
 
+restMemberExpr simpleExpr = do
+  let simple = SimpleMember simpleExpr
+  expr <- try $ memberRest simple
+  return $ MemberExpression expr
+
 memberExpression = do
   simpleExpr <- primaryExpression
-  let simple = SimpleMember simpleExpr
-  expr <- option simple $ try $ memberRest simple 
-  return $ MemberExpression $ expr
+  restMemberExpr simpleExpr <|> return simpleExpr

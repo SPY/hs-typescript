@@ -1,9 +1,11 @@
 {-# OPTIONS_GHC -F -pgmF htfpp #-}
-module Test.Utils (parseString, makeSuccess, makeFailed) where
+module Test.Utils where
 
 import Test.Framework
 
 import Text.Parsec
+
+import Language.Typescript.Types
 
 parseString parser inp = runParser parser () "" inp
 
@@ -16,3 +18,10 @@ makeFailed parser inp =
     case parseString parser inp of
       Left _ -> assertBool True
       Right _ -> assertFailure "Expected parsing error"
+
+x = Identifier "x"
+y = Identifier "y"
+z = Identifier "z"
+yString = PrimaryExpression $ PrimaryLiteral $ StringLiteral "y"
+
+xz = MemberExpression $ Dot (SimpleMember $ PrimaryExpression x) $ z

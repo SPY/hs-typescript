@@ -24,10 +24,7 @@ test_falseLiteral =
     success "false" $ PrimaryLiteral $ Boolean $ False
 
 test_parenthesesLiteral =
-    success "( null )" $ Parentheses $
-            MemberExpression $ SimpleMember $ 
-            PrimaryExpression $ PrimaryLiteral $ Null
+    success "( null )" $ Parentheses $ PrimaryExpression $ PrimaryLiteral $ Null
 
 test_parenthesesIdentifier =
-    success "(_ident)" $ Parentheses $ MemberExpression $ 
-            SimpleMember $ PrimaryExpression $ Identifier "_ident"
+    success "(_ident)" $ Parentheses $ PrimaryExpression $ Identifier "_ident"
