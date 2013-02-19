@@ -7,7 +7,6 @@ import Text.Parsec
 import Language.Typescript.Types
 import Language.Typescript.Parser.Types
 
-import Language.Typescript.Parser.Expression.Primary
 import Language.Typescript.Parser.Expression.Member
 import Language.Typescript.Parser.Expression.New (arguments)
 
